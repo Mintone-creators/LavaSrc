@@ -245,11 +245,6 @@ public class LavaSrcPlugin implements AudioPlayerManagerConfiguration, SearchMan
 			manager.registerSearchManager(this.vkMusic);
 		}
 
-		if (this.tidal != null && this.sourcesConfig.isTidal()) {
-			log.info("Registering Tidal search manager...");
-			manager.registerSearchManager(this.tidal);
-		}
-
 		return manager;
 	}
 
