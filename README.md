@@ -5,26 +5,52 @@
 > [!IMPORTANT]
 > For LavaSrc v3 (Lavaplayer v1 & Lavalink v3) look [here](https://github.com/topi314/LavaSrc/tree/v3-legacy)
 
-A collection of additional [Lavaplayer v2](https://github.com/sedmelluq/lavaplayer), [LavaSearch](https://github.com/topi314/LavaSearch) & [LavaLyrics](https://github.com/topi314/LavaLyrics) Audio Source Managers and [Lavalink v4](https://github.com/lavalink-devs/Lavalink) Plugin.
-* [Spotify](https://www.spotify.com) playlists/albums/songs/artists(top tracks)/search results/[LavaSearch](https://github.com/topi314/LavaSearch)/[LavaLyrics](https://github.com/topi314/LavaLyrics)
-* [Apple Music](https://www.apple.com/apple-music/) playlists/albums/songs/artists/search results/[LavaSearch](https://github.com/topi314/LavaSearch) (Big thx to [ryan5453](https://github.com/ryan5453) for helping me)
-* [Deezer](https://www.deezer.com) playlists/albums/songs/artists/search results/[LavaSearch](https://github.com/topi314/LavaSearch)/[LavaLyrics](https://github.com/topi314/LavaLyrics) (Big thx to [ryan5453](https://github.com/ryan5453) and [melike2d](https://github.com/melike2d) for helping me)
-* [Yandex Music](https://music.yandex.ru) playlists/albums/songs/artists/podcasts/search results/[LavaLyrics](https://github.com/topi314/LavaLyrics)/[LavaSearch](https://github.com/topi314/LavaSearch) (Thx to [AgutinVBoy](https://github.com/agutinvboy) for implementing it)
-* [Flowery TTS](https://flowery.pw/docs) (Thx to [bachtran02](https://github.com/bachtran02) for implementing it)
-* [YouTube](https://youtube.com) & [YouTubeMusic](https://music.youtube.com/) [LavaSearch](https://github.com/topi314/LavaSearch)/[LavaLyrics](https://github.com/topi314/LavaLyrics)  (Thx to [DRSchlaubi](https://github.com/DRSchlaubi) for helping me)
-* [Vk Music](https://music.vk.com/) playlists/albums/songs/artists(top tracks)/search results/[LavaLyrics](https://github.com/topi314/LavaLyrics)/[LavaSearch](https://github.com/topi314/LavaSearch) (Thx to [Krispeckt](https://github.com/Krispeckt) for implementing it)
-* [Tidal](https://tidal.com) playlists/albums/songs/search results (Thx to [Nansess](https://github.com/Nansess) and [InfNibor](https://github.com/infnibor) for implementing it)
-
-> [!IMPORTANT]
-> Tracks from Spotify & Apple Music & Tidal don't actually play from their sources, but are instead resolved via the configured providers
-
 ## Summary
 
+* [Sources](#sources)
+    * [Features](#features)
+    * [What is Mirroring?](#what-is-mirroring)
 * [Lavalink Usage](#lavalink-usage)
-  * [Configuration](#configuration)
-  * [Update Settings at Runtime](#update-settings-at-runtime)
+    * [Configuration](#configuration)
+    * [Update Settings at Runtime](#update-settings-at-runtime)
 * [Lavaplayer Usage](#lavaplayer-usage)
 * [Supported URLs and Queries](#supported-urls-and-queries)
+
+# Sources
+
+| Source                                              | Features       | Playback                     | Credits                                                                                                                |
+|-----------------------------------------------------|----------------|------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| Spotify                                             | 📁💿🎵🧑🔍📻🔬📜 | [Mirror](#what-is-mirroring) | [@topi314](https://github.com/topi314)                                                                                 |
+| Apple Music                                         | 📁💿🎵🧑🔍🔬 | [Mirror](#what-is-mirroring) | [@ryan5453](https://github.com/ryan5453)                                                                               |
+| Deezer                                              | 📁💿🎵🧑🔍📻🔬📜 | Direct                       | [@topi314](https://github.com/topi314), [@ryan5453](https://github.com/ryan5453), [@viztea](https://github.com/viztea) |
+| Yandex                                              | 📁💿🎵🧑🔍📻🔬📜 | Direct                       | [@agutinvboy](https://github.com/agutinvboy)                                                                           |
+| Flowery TTS                                         |                | Direct                       | [@bachtran02](https://github.com/bachtran02)                                                                           |
+| YouTube (Music)                                     | 🔬📜           | N/A                          | [@topi314](https://github.com/topi314), [@DRSchlaubi](https://github.com/DRSchlaubi)                                   |
+| VK Music                                            | 📁💿🎵🧑🔍📻🔬📜 | Direct                       | [@Krispeckt](https://github.com/Krispeckt)                                                                             |
+| Tidal                                               | 📁💿🎵🧑🔍📻   | [Mirror](#what-is-mirroring) | [@nansess](https://github.com/nansess), [@InfNibor](https://github.com/InfNibor)                                       |
+| Qobuz                                               | 📁💿🎵🧑🔍📻   | Direct                       | [@munishkhatri720](https://github.com/munishkhatri720)                                                                 |
+| YouTube([yt-dlp](https://github.com/yt-dlp/yt-dlp)) | 📁💿🎵🧑🔍     | Direct                       | [@topi314](https://github.com/topi314)                                                                                 |
+| [LRCLIB](https://lrclib.net))                       | 📜             | N/A                          | [@topi314](https://github.com/topi314)                                                                                 |
+| JioSaavn                                            | 📁💿🎵🧑🔍📻🔬 | Direct                       | [@WeeeeeeeeeeS](https://github.com/WeeeeeeeeeeS), [@freyacodes](https://github.com/freyacodes)                         |
+
+### Features
+
+- 📁 playlists
+- 💿 albums
+- 🎵 tracks
+- 📻 recommendations
+- 🧑 artist top tracks
+- 🔍 search results
+- 🔬 [LavaSearch](https://github.com/topi314/LavaSearch)
+- 📜 [LavaLyrics](https://github.com/topi314/LavaLyrics)
+
+> [!IMPORTANT]
+> ### What is Mirroring?
+>
+> Mirroring is the process of taking the metadata resolved from one source and using it to retrieve a playable `AudioTrack` from another.
+>
+> For example, LavaSrc cannot directly play from Spotify, or any source marked as `Mirror` playback, so it must use a LavaSrc platform marked as `Direct`, like Deezer.
+> You may also use any source manager registered to your `AudioPlayerManager`.
 
 ## Lavalink Usage
 
@@ -65,6 +91,8 @@ To get your Vk Music user token go [here](#vk-music)
 
 To get your Tidal token go [here](#tidal)
 
+To get your Qobuz userOauthToken go [here](#qobuz)
+
 > [!WARNING]
 > YES `plugins` IS AT ROOT IN THE YAML
 
@@ -86,21 +114,28 @@ plugins:
       youtube: false # Enable YouTube search source (https://github.com/topi314/LavaSearch)
       vkmusic: false # Enable Vk Music source
       tidal: false # Enable Tidal source
+      qobuz : false # Enabled qobuz source
+      ytdlp: false # Enable yt-dlp source
+      jiosaavn: false # Enable JioSaavn source
     lyrics-sources:
       spotify: false # Enable Spotify lyrics source
       deezer: false # Enable Deezer lyrics source
       youtube: false # Enable YouTube lyrics source
       yandexmusic: false # Enable Yandex Music lyrics source
       vkmusic: false # Enable Vk Music lyrics source
+      lrcLib: false # Enable LRC Library lyrics source (https://lrclib.net)
     spotify:
-      clientId: "your client id"
-      clientSecret: "your client secret"
+      # clientId & clientSecret are required for using spsearch
+#      clientId: "your client id"
+#      clientSecret: "your client secret"
       # spDc: "your sp dc cookie" # the sp dc cookie used for accessing the spotify lyrics api
       countryCode: "US" # the country code you want to use for filtering the artists top tracks. See https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
       playlistLoadLimit: 6 # The number of pages at 100 tracks each
       albumLoadLimit: 6 # The number of pages at 50 tracks each
       resolveArtistsInSearch: true # Whether to resolve artists in track search results (can be slow)
       localFiles: false # Enable local files support with Spotify playlists. Please note `uri` & `isrc` will be `null` & `identifier` will be `"local"`
+      preferAnonymousToken: false # Whether to use the anonymous token for resolving tracks, artists and albums. Spotify generated playlists are always resolved with the anonymous tokens since they do not work otherwise. This requires the customTokenEndpoint to be set.
+      customTokenEndpoint: "http://localhost:8080/api/token" # Optional custom endpoint for getting the anonymous token. If not set, spotify's default endpoint will be used which might not work. The response must match spotify's anonymous token response format.
     applemusic:
       countryCode: "US" # the country code you want to use for filtering the artists top tracks and language. See https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
       mediaAPIToken: "your apple music api token" # apple music api token
@@ -115,13 +150,17 @@ plugins:
       albumLoadLimit: 6 # The number of pages at 300 tracks each
     deezer:
       masterDecryptionKey: "your master decryption key" # the master key used for decrypting the deezer tracks. (yes this is not here you need to get it from somewhere else)
-      arl: "your deezer arl" # the arl cookie used for accessing the deezer api this does not appear to be optional anymore
+      arl: "your deezer arl" # the arl cookie used for accessing the deezer api this is not optional anymore
       formats: [ "FLAC", "MP3_320", "MP3_256", "MP3_128", "MP3_64", "AAC_64" ] # the formats you want to use for the deezer tracks. "FLAC", "MP3_320", "MP3_256" & "AAC_64" are only available for premium users and require a valid arl
     yandexmusic:
-      accessToken: "your access token" # the token used for accessing the yandex music api. See https://github.com/TopiSenpai/LavaSrc#yandex-music
+      accessToken: "your access token" # the token used for accessing the yandex music api. See https://github.com/topi314/LavaSrc#yandex-music
       playlistLoadLimit: 1 # The number of pages at 100 tracks each
       albumLoadLimit: 1 # The number of pages at 50 tracks each
       artistLoadLimit: 1 # The number of pages at 10 tracks each
+#      proxy: # If defined, YandexMusic HTTP requests will be proxied through here. YandexMusic uses region blocking
+#        url: "https://example.org" # The HTTP proxy to use
+#        username: "my-bot" # Optional username to authenticate with the proxy
+#        password: "youshallpass" # Optional password to authenticate with the proxy      
     flowerytts:
       voice: "default voice" # (case-sensitive) get default voice from here https://api.flowery.pw/v1/tts/voices
       translate: false # whether to translate the text to the native language of voice
@@ -129,16 +168,39 @@ plugins:
       speed: 1.0 # the speed parameter is a float between 0.5 and 10. The default is 1.0. (0.5 is half speed, 2.0 is double speed, etc.)
       audioFormat: "mp3" # supported formats are: mp3, ogg_opus, ogg_vorbis, aac, wav, and flac. Default format is mp3
     youtube:
-      countryCode: "US" # the country code you want to use for searching lyrics via ISRC. See https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+      countryCode: "US" # the country code you want to use for searching & lyrics. See https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+      language: "en" # the language code you want to use for searching & lyrics. See https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes
     vkmusic:
       userToken: "your user token" # This token is needed for authorization in the api. Guide: https://github.com/topi314/LavaSrc#vk-music
       playlistLoadLimit: 1 # The number of pages at 50 tracks each
       artistLoadLimit: 1 # The number of pages at 10 tracks each
       recommendationsLoadLimit: 10 # Number of tracks
+#      proxy: # If the server with the plugin is located outside of Russia, you must configure a proxy located in Russia to bypass regional restrictions.
+#        url: "https://example.org" # The HTTP proxy to use
+#        username: "my-bot" # Optional username to authenticate with the proxy
+#        password: "youshallpass" # Optional password to authenticate with the proxy
     tidal:
       countryCode: "US" # the country code for accessing region-specific content on Tidal (ISO 3166-1 alpha-2).
       searchLimit: 6 # How many search results should be returned
       token: "your tidal token" # the token used for accessing the tidal api. See https://github.com/topi314/LavaSrc#tidal
+    qobuz:
+      userOauthToken : "your user oauth token" # This token is needed for authorization in the api. Guide: https://github.com/topi314/LavaSrc#qobuz
+      #      appId : optional (Only pass it when you are using an old userOauthToken)
+      #      appSecret : optional (Only pass it when you are using an old userOauthToken)
+    ytdlp:
+      path: "yt-dlp" # the path to the yt-dlp executable.
+      searchLimit: 10 # How many search results should be returned
+#      customLoadArgs: ["-q", "--no-warnings", "--flat-playlist", "--skip-download", "-J"] # Custom arguments to pass to yt-dlp
+#      customPlaybackArgs: ["-q", "--no-warnings", "-f", "bestaudio", "-J"] # Custom arguments for yt-dlp
+    jiosaavn:
+      decryption: # The decryption configuration for the JioSaavn tracks
+        secretKey: "??" # The required secret key used for decryption (Find your own secret key)
+#        algorithm: "DES" # The algorithm used for decryption (Default "DES")
+#        transformation: "DES/ECB/PKCS5Padding" # The transformation used for decryption (Default "DES/ECB/PKCS5Padding")
+#      proxy: # If defined, JioSaavn HTTP requests will be proxied through here. JioSaavn uses region blocking
+#        url: "https://example.org" # The HTTP proxy to use
+#        username: "my-bot" # Optional username to authenticate with the proxy
+#        password: "youshallpass" # Optional password to authenticate with the proxy
 ```
 
 ### Plugin Info
@@ -246,14 +308,17 @@ PATCH /v4/lavasrc/config
 | ?deezer      | [Deezer Config](#deezer-config-object)             | The Deezer settings       |
 | ?yandexMusic | [Yandex Music Config](#yandex-music-config-object) | The Yandex Music settings |
 | ?vkMusic     | [Vk Music Config](#vk-music-config-object)         | The Vk Music settings     |
+| ?qobuz       | [Qobuz Config](#qobuz-config-object)               | The Qobuz settings        |
 
 ##### Spotify Config Object
 
-| Field         | Type   | Description              |
-|---------------|--------|--------------------------|
-| ?clientId     | string | The Spotify clientId     |
-| ?clientSecret | string | The Spotify clientSecret |
-| ?spDc         | string | The Spotify spDc cookie  |
+| Field                 | Type    | Description                                                                 |
+|-----------------------|---------|-----------------------------------------------------------------------------|
+| ?clientId             | string  | The Spotify clientId                                                        |
+| ?clientSecret         | string  | The Spotify clientSecret                                                    |
+| ?spDc                 | string  | The Spotify spDc cookie                                                     |
+| ?preferAnonymousToken | boolean | Whether to use the anonymous token for resolving tracks, artists and albums |
+| ?customTokenEndpoint  | string  | The custom endpoint for getting the anonymous token                         |
 
 ##### Apple Music Config Object
 
@@ -291,6 +356,14 @@ PATCH /v4/lavasrc/config
 |------------|--------|-------------------------|
 | ?userToken | string | The Vk Music user token |
 
+#### Qobuz Config Object
+
+| Field           | Type   | Description          |
+|-----------------|--------|----------------------|
+| ?userOauthToken | string | The Qobuz user token |
+| ?appId          | String | The Qobuz App ID     |
+| ?appSecret      | string | The Qobuz App Secret |
+
 <details>
 <summary>Example Payload</summary>
 
@@ -299,7 +372,9 @@ PATCH /v4/lavasrc/config
   "spotify": {
     "clientId": "your client id",
     "clientSecret": "your client secret",
-    "spDc": "your sp dc cookie"
+    "spDc": "your sp dc cookie", 
+    "preferAnonymousToken": false,
+    "customTokenEndpoint": "http://localhost/api/token"
   },
   "applemusic": {
     "mediaAPIToken": "your apple music api token"
@@ -320,6 +395,16 @@ PATCH /v4/lavasrc/config
   },
   "vkMusic": {
     "userToken": "your user token"
+  },
+  "qobuz": {
+    "userOauthToken": "your user token",
+    "appId": "your app ID",
+    "appSecret": "your app Secret"
+  },
+  "ytdlp": {
+    "path": "yt-dlp",
+    "customLoadArgs": ["-q", "--no-warnings", "--flat-playlist", "--skip-download", "-J"],
+    "customPlaybackArgs": ["-q", "--no-warnings", "-f", "bestaudio", "-J"]
   }
 }
 ```
@@ -407,6 +492,12 @@ AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
 var spotify = new SpotifySourceManager(clientId, clientSecret, spDc, countryCode, () -> playerManager, DefaultMirroringAudioTrackResolver);
 playerManager.registerSourceManager(spotify);
 ```
+
+#### Access Tokens
+
+Getting anonymous & account access tokens is generally optional but required if you want to resolve spotify generated playlists or lyrics.
+
+You can use a service such as [Spotify Tokener](https://github.com/topi314/spotify-tokener) via the `customTokenEndpoint` option to support those.
 
 #### LavaLyrics
 
@@ -545,7 +636,7 @@ searchManager.registerSearchManager(deezer);
 1. (Optional) Open DevTools in your browser and on the Network tab enable trotlining.
 2. Go to https://oauth.yandex.ru/authorize?response_type=token&client_id=23cabbbdc6cd418abb4b39c32c41195d
 3. Authorize and grant access
-4. The browser will redirect to the address like `https://music.yandex.ru/#access_token=AQAAAAAYc***&token_type=bearer&expires_in=31535645`. 
+4. The browser will redirect to the address like `https://music.yandex.ru/#access_token=AQAAAAAYc***&token_type=bearer&expires_in=31535645`.
    Very quickly there will be a redirect to another page, so you need to have time to copy the link. ![image](https://user-images.githubusercontent.com/68972811/196124196-a817b828-3387-4f70-a2b2-cdfdc71ce1f2.png)
 5. Your accessToken, what is after `access_token`.
 
@@ -646,7 +737,9 @@ playerManager.registerSourceManager(new FloweryTTSSourceManager("..."));
 AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
 
 // create a new VkMusicSourceManager with the user token and register it
-playerManager.registerSourceManager(new VkMusicSourceManager("...");
+var vkMusic = new VkMusicSourceManager("...");
+
+playerManager.registerSourceManager(vkMusic);
 ```
 
 #### LavaLyrics
@@ -659,7 +752,7 @@ playerManager.registerSourceManager(new VkMusicSourceManager("...");
 var lyricsManager = new LyricsManager();
 
 // register source
-lyricsManager.registerLyricsManager(vkmusic);
+lyricsManager.registerLyricsManager(vkMusic);
 ```
 
 </details>
@@ -674,7 +767,7 @@ lyricsManager.registerLyricsManager(vkmusic);
 var searchManager = new SearchManager();
 
 // register source
-searchManager.registerSearchManager(vkmusic);
+searchManager.registerSearchManager(vkMusic);
 ```
 
 </details>
@@ -699,13 +792,53 @@ var tidal = new TidalSourceManager(countryCode, () -> playerManager, new Default
 playerManager.registerSourceManager(tidal);
 ```
 
+### Qobuz
+
+<details>
+<summary>How to get the userOauthToken</summary>
+
+### WARNING!
+
+#### If you are using an older userOauthToken, you must specify the `x-app-id` in the config. Each userOauthToken is associated with a specific app ID. If you don't specify the `x-app-id` in the config, the latest fetched one will be used and it may not work. Remember that Qobuz requires a premium account to work properly.
+
+To retrieve the token:
+1. Open Qobuz in any web browser and log in with your Qobuz account.
+2. Press **F12** to open the developer tools and navigate to the **Network** tab.
+3. Select any request and check the request headers.
+> When looking for a request, you must find a POST request - not OPTIONS!
+4. Copy the value of the `x-user-auth-token` and paste it into the config.
+
+</details>
+
+```java
+AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
+
+// create a new QobuzAudioSourceManager with the userOauthToken and register it
+playerManager.registerSourceManager(new QobuzAudioSourceManager("...");
+```
+
+### yt-dlp
+
+```java
+AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
+
+// create a new YTDLPSourceManager with the path to the yt-dlp executable and register it
+playerManager.registerSourceManager(new YTDLPSourceManager("path/to/yt-dlp"));
+```
+
+
+---
 ## Supported URLs and Queries
 
 ### Spotify
 
 * `spsearch:animals architects` (check out [Spotify Search Docs](https://developer.spotify.com/documentation/web-api/reference/search) for advanced search queries like isrc & co)
 * `sprec:seed_artists=3ZztVuWxHzNpl0THurTFCv,4MzJMcHQBl9SIYSjwWn8QW&seed_genres=metalcore&seed_tracks=5ofoB8PFmocBXFBEWVb6Vz,6I5zXzSDByTEmYZ7ePVQeB`
-  (check out [Spotify Recommendations Docs](https://developer.spotify.com/documentation/web-api/reference/get-recommendations) for the full query parameter list)
+  (only works in [Extended quota mode](https://developer.spotify.com/documentation/web-api/concepts/quota-modes#extended-quota-mode) or with anonymous tokens, check out [Spotify Recommendations Docs](https://developer.spotify.com/documentation/web-api/reference/get-recommendations) for the full query parameter list)
+* `sprec:mix:artist:0gxyHStUsqpMadRV0Di1Qt`
+* `sprec:mix:track:4PTG3Z6ehGkBFwjybzWkR8`
+* `sprec:mix:album:7t0YTcJ3HsalOTIE6XzQYo`
+* `sprec:mix:isrc:GBARL9300135`
 * https://open.spotify.com/track/0eG08cBeKk0mzykKjw4hcQ
 * https://open.spotify.com/album/7qemUq4n71awwVPOaX7jw4
 * https://open.spotify.com/playlist/7HAO9R9v203gkaPAgknOMp (playlists can include local files if you enabled this via: `plugins.lavasrc.spotify.localFiles: true`. Please note `uri` & `isrc` will be `null` & `identifier` will be `"local"`)
@@ -740,6 +873,7 @@ playerManager.registerSourceManager(tidal);
 * https://music.yandex.ru/album/13886032
 * https://music.yandex.ru/track/71663565
 * https://music.yandex.ru/users/yamusic-bestsongs/playlists/701626
+* https://music.yandex.ru/playlists/e1bb61b5-360d-e3c5-124c-ef58d981ca7d
 * https://music.yandex.ru/artist/701626
 
 ### Flowery TTS
@@ -774,5 +908,33 @@ You can read about all the available options [here](https://flowery.pw/docs), a 
 * https://tidal.com/browse/album/12345678
 * https://tidal.com/browse/playlist/12345678
 * https://tidal.com/browse/artist/12345678
+
+### Qobuz
+
+* `qbsearch:animals architects`
+* `qbisrc:USEP42058010` (`qbisrc:ISRC`)
+* `qbrec:295210968` (`qbrec:{TRACK_ID}`)
+* https://open.qobuz.com/track/52151405
+* https://play.qobuz.com/album/c9wsrrjh49ftb
+* https://play.qobuz.com/playlist/24893079
+* https://play.qobuz.com/artist/2070395
+* https://www.qobuz.com/us-en/album/kesariya-pritam-arijit-singh-amitabh-bhattacharya/cxtiqss1up8ub
+
+### yt-dlp
+
+* `ytsearch:animals architects`
+* `ytsearch:"USEP42058010"` (`ytsearch:"{ISRC}"`)
+* https://www.youtube.com/watch?v=jdWhJcrrjQs
+* https://www.youtube.com/watch?v=yEBEg4NGVrw&list=PLcZMZxR9uxC8EGrCPopQT1JjNTV6nnQ1G
+* https://youtu.be/jdWhJcrrjQs
+
+### JioSaavn
+
+* `jssearch:animals architects`
+* `jsrec:identifier`
+* https://www.jiosaavn.com/song/apna-bana-le/ATIfejZ9bWw
+* https://www.jiosaavn.com/album/bhediya/wSM2AOubajk
+* https://www.jiosaavn.com/artist/arijit-singh-songs/LlRWpHzy3Hk
+* https://www.jiosaavn.com/featured/jai-hanuman/8GIEhrr8clSO0eMLZZxqsA
 
 ---

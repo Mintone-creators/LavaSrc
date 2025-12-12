@@ -30,19 +30,19 @@ import java.io.DataInput;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class DeezerAudioSourceManager extends ExtendedAudioSourceManager implements HttpConfigurable, AudioSearchManager, AudioLyricsManager {
+	private static final byte[] decryptionKeyHash = new byte[] {
+		52, 76, 41, -118, 120, -123, 48, 72, -58, 74, 16, 75, 82, 101, -70, -33, 15, -66, 111, -38, -80, 71, 103, 11, -75, -120, -101, -9, 66, -53, -38, -16
+	};
 
 	public static final Pattern URL_PATTERN = Pattern.compile("(https?://)?(www\\.)?deezer\\.com/(?<countrycode>[a-zA-Z]{2}/)?(?<type>track|album|playlist|artist)/(?<identifier>[0-9]+)");
 	public static final String SEARCH_PREFIX = "dzsearch:";
@@ -60,10 +60,9 @@ public class DeezerAudioSourceManager extends ExtendedAudioSourceManager impleme
 	private static final Logger log = LoggerFactory.getLogger(DeezerAudioSourceManager.class);
 
 	private final String masterDecryptionKey;
-	private String arl;
-	private DeezerAudioTrack.TrackFormat[] formats;
+	private final DeezerTokenTracker tokenTracker;
 	private final HttpInterfaceManager httpInterfaceManager;
-	private Tokens tokens;
+	private DeezerAudioTrack.TrackFormat[] formats;
 
 	public DeezerAudioSourceManager(String masterDecryptionKey) {
 		this(masterDecryptionKey, null);
@@ -78,59 +77,44 @@ public class DeezerAudioSourceManager extends ExtendedAudioSourceManager impleme
 			throw new IllegalArgumentException("Deezer master key must be set");
 		}
 
+		if (!validateDecryptionKey(masterDecryptionKey)) {
+			log.warn("Deezer master decryption key is possibly invalid, playback may not work!");
+		}
+
 		this.masterDecryptionKey = masterDecryptionKey;
-		this.arl = arl != null && arl.isEmpty() ? null : arl;
+		this.tokenTracker = new DeezerTokenTracker(this, arl);
 		this.formats = formats != null && formats.length > 0 ? formats : DeezerAudioTrack.TrackFormat.DEFAULT_FORMATS;
 		this.httpInterfaceManager = HttpClientTools.createCookielessThreadLocalManager();
 	}
 
-	public void setFormats(DeezerAudioTrack.TrackFormat[] formats) {
-		if (formats.length == 0) {
-			throw new IllegalArgumentException("Deezer track formats must not be empty");
+	public boolean validateDecryptionKey(String masterDecryptionKey) {
+		try {
+			MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+			messageDigest.update(masterDecryptionKey.getBytes(StandardCharsets.UTF_8));
+			return Arrays.equals(messageDigest.digest(), decryptionKeyHash);
+		} catch (NoSuchAlgorithmException e) {
+			return false;
 		}
-		this.formats = formats;
-	}
-
-	public void setArl(String arl) {
-		this.arl = arl;
 	}
 
 	static void checkResponse(JsonBrowser json, String message) throws IllegalStateException {
 		if (json == null) {
 			throw new IllegalStateException(message + "No response");
 		}
-		var errors = json.get("data").index(0).get("errors").values();
-		if (!errors.isEmpty()) {
-			var errorsStr = errors.stream().map(error -> error.get("code").text() + ": " + error.get("message").text()).collect(Collectors.joining(", "));
-			throw new IllegalStateException(message + errorsStr);
+		var error = json.get("error").safeText();
+		if (!error.equals("{}") && !error.equals("[]") && !error.equals("null") && !error.isEmpty()) {
+			throw new IllegalStateException(message + ": " + error);
+		}
+
+
+		var errors = json.get("errors").safeText();
+		if (!errors.equals("[]") && !errors.isEmpty()) {
+			throw new IllegalStateException(message + ": " + errors);
 		}
 	}
 
-	private void refreshSession() throws IOException {
-		var getSessionID = new HttpPost(DeezerAudioSourceManager.PRIVATE_API_BASE + "?method=deezer.ping&input=3&api_version=1.0&api_token=");
-		var json = LavaSrcTools.fetchResponseAsJson(this.getHttpInterface(), getSessionID);
-
-		checkResponse(json, "Failed to get session ID: ");
-		var sessionID = json.get("results").get("SESSION").text();
-
-		var getUserToken = new HttpPost(DeezerAudioSourceManager.PRIVATE_API_BASE + "?method=deezer.getUserData&input=3&api_version=1.0&api_token=");
-		getUserToken.setHeader("Cookie", "sid=" + sessionID);
-		json = LavaSrcTools.fetchResponseAsJson(this.getHttpInterface(), getUserToken);
-
-		checkResponse(json, "Failed to get user token: ");
-		this.tokens = new Tokens(
-			sessionID,
-			json.get("results").get("checkForm").text(),
-			json.get("results").get("USER").get("OPTIONS").get("license_token").text(),
-			Instant.now().plus(3600, ChronoUnit.SECONDS)
-		);
-	}
-
-	public Tokens getTokens() throws IOException {
-		if (this.tokens == null || Instant.now().isAfter(this.tokens.expireAt)) {
-			this.refreshSession();
-		}
-		return this.tokens;
+	public void setArl(String arl) {
+		this.tokenTracker.setArl(arl);
 	}
 
 	@NotNull
@@ -192,26 +176,6 @@ public class DeezerAudioSourceManager extends ExtendedAudioSourceManager impleme
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	public AudioLyrics getLyrics(String id) throws IOException {
-		var json = this.getJson(PRIVATE_API_BASE + "?method=song.getLyrics&api_version=1.0&api_token=" + this.getTokens().api + "&sng_id=" + id);
-		if (json == null || json.get("results").values().isEmpty()) {
-			return null;
-		}
-
-		var results = json.get("results");
-		var lyricsText = results.get("LYRICS_TEXT").text();
-		var lyrics = new ArrayList<AudioLyrics.Line>();
-		for (var line : results.get("LYRICS_SYNC_JSON").values()) {
-			lyrics.add(new BasicAudioLyrics.BasicLine(
-				Duration.ofMillis(line.get("milliseconds").asLong(0)),
-				Duration.ofMillis(line.get("duration").asLong(0)),
-				line.get("line").text()
-			));
-		}
-
-		return new BasicAudioLyrics("deezer", "LyricFind", lyricsText, lyrics);
 	}
 
 	@Override
@@ -302,7 +266,7 @@ public class DeezerAudioSourceManager extends ExtendedAudioSourceManager impleme
 				continue;
 			}
 			if (!track.get("readable").asBoolean(false)) {
-				log.warn("Skipping track {} by {} because it is not readable. Available countries: {}", track.get("title").text(), track.get("artist").get("name").text(), track.get("available_countries").text());
+				log.warn("Skipping track {} by {} because it is not readable. Available countries: {}", track.get("title").text(), track.get("artist").get("name").safeText(), track.get("available_countries").text());
 				continue;
 			}
 			tracks.add(this.parseTrack(track, preview));
@@ -318,8 +282,8 @@ public class DeezerAudioSourceManager extends ExtendedAudioSourceManager impleme
 		var id = json.get("id").text();
 		return new DeezerAudioTrack(
 			new AudioTrackInfo(
-				json.get("title").text(),
-				json.get("artist").get("name").text(),
+				json.get("title").safeText(),
+				json.get("artist").get("name").safeText(),
 				preview ? PREVIEW_LENGTH : json.get("duration").asLong(0) * 1000,
 				id,
 				false,
@@ -350,7 +314,7 @@ public class DeezerAudioSourceManager extends ExtendedAudioSourceManager impleme
 		if (types.contains(AudioSearchResult.Type.ALBUM)) {
 			for (var album : json.get("albums").get("data").values()) {
 				albums.add(new DeezerAudioPlaylist(
-					album.get("title").text(),
+					album.get("title").safeText(),
 					Collections.emptyList(),
 					DeezerAudioPlaylist.Type.ALBUM,
 					album.get("link").text(),
@@ -365,7 +329,7 @@ public class DeezerAudioSourceManager extends ExtendedAudioSourceManager impleme
 		if (types.contains(AudioSearchResult.Type.ARTIST)) {
 			for (var artist : json.get("artists").get("data").values()) {
 				artists.add(new DeezerAudioPlaylist(
-					artist.get("name").text() + "'s Top Tracks",
+					artist.get("name").safeText() + "'s Top Tracks",
 					Collections.emptyList(),
 					DeezerAudioPlaylist.Type.ARTIST,
 					artist.get("link").text(),
@@ -380,7 +344,7 @@ public class DeezerAudioSourceManager extends ExtendedAudioSourceManager impleme
 		if (types.contains(AudioSearchResult.Type.PLAYLIST)) {
 			for (var playlist : json.get("playlists").get("data").values()) {
 				playlists.add(new DeezerAudioPlaylist(
-					playlist.get("title").text(),
+					playlist.get("title").safeText(),
 					Collections.emptyList(),
 					DeezerAudioPlaylist.Type.PLAYLIST,
 					playlist.get("link").text(),
@@ -430,8 +394,30 @@ public class DeezerAudioSourceManager extends ExtendedAudioSourceManager impleme
 			this);
 	}
 
+	public AudioLyrics getLyrics(String id) throws IOException {
+		var tokens = this.tokenTracker.getTokens();
+
+		var json = this.getJson(PRIVATE_API_BASE + "?method=song.getLyrics&api_version=1.0&api_token=" + tokens.api + "&sng_id=" + id);
+		if (json == null || json.get("results").values().isEmpty()) {
+			return null;
+		}
+
+		var results = json.get("results");
+		var lyricsText = results.get("LYRICS_TEXT").text();
+		var lyrics = new ArrayList<AudioLyrics.Line>();
+		for (var line : results.get("LYRICS_SYNC_JSON").values()) {
+			lyrics.add(new BasicAudioLyrics.BasicLine(
+				Duration.ofMillis(line.get("milliseconds").asLong(0)),
+				Duration.ofMillis(line.get("duration").asLong(0)),
+				line.get("line").text()
+			));
+		}
+
+		return new BasicAudioLyrics("deezer", "LyricFind", lyricsText, lyrics);
+	}
+
 	private AudioItem getRecommendations(String query, boolean preview) throws IOException {
-		var tokens = this.getTokens();
+		var tokens = this.tokenTracker.getTokens();
 
 		String method;
 		String payload;
@@ -444,12 +430,12 @@ public class DeezerAudioSourceManager extends ExtendedAudioSourceManager impleme
 		}
 
 		var request = new HttpPost(DeezerAudioSourceManager.PRIVATE_API_BASE + String.format("?method=%s&input=3&api_version=1.0&api_token=%s", method, tokens.api));
-		request.setHeader("Cookie", "sid=" + tokens.sessionId);
+		request.setHeader("Cookie", "sid=" + tokens.sessionId + "; dzr_uniq_id=" + tokens.dzrUniqId);
 		request.setHeader("Content-Type", "application/json");
 		request.setEntity(new StringEntity(payload, StandardCharsets.UTF_8));
 
 		var result = LavaSrcTools.fetchResponseAsJson(this.getHttpInterface(), request);
-		checkResponse(result, "Failed to get recommendations: ");
+		checkResponse(result, "Failed to get recommendations");
 
 		if (result.get("results").get("data").values().isEmpty()) {
 			return AudioReference.NO_TRACK;
@@ -569,31 +555,22 @@ public class DeezerAudioSourceManager extends ExtendedAudioSourceManager impleme
 		return this.masterDecryptionKey;
 	}
 
-	@Nullable
-	public String getArl() {
-		return this.arl;
-	}
-
 	public DeezerAudioTrack.TrackFormat[] getFormats() {
 		return this.formats;
+	}
+
+	public void setFormats(DeezerAudioTrack.TrackFormat[] formats) {
+		if (formats.length == 0) {
+			throw new IllegalArgumentException("Deezer track formats must not be empty");
+		}
+		this.formats = formats;
 	}
 
 	public HttpInterface getHttpInterface() {
 		return this.httpInterfaceManager.getInterface();
 	}
 
-	public static class Tokens {
-		public String sessionId;
-		public String api;
-		public String license;
-		public Instant expireAt;
-
-		public Tokens(String sessionId, String api, String license, Instant expireAt) {
-			this.sessionId = sessionId;
-			this.api = api;
-			this.license = license;
-			this.expireAt = expireAt;
-		}
+	public DeezerTokenTracker getTokenTracker() {
+		return this.tokenTracker;
 	}
-
 }
